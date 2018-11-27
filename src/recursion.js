@@ -17,7 +17,7 @@ let factorial = function(n)
 /* STRATEGY:
 1) Base case: when array is empty, return 0
 2) Else: recursively return last number + all but last numbers
--- Make sure to make copy of array and not mutate original
+* Make sure to make copy of array and not mutate original
  */
 let sum = function(array)
 {
@@ -44,7 +44,8 @@ let arraySum = function(array)
     if (Array.isArray(array[i]))
     {
       total = total + arraySum(array[i]);
-    } else {
+    } else
+    {
       total = total + array[i];
     }
   }
@@ -52,22 +53,25 @@ let arraySum = function(array)
 };
 
 // 4. Check if a number is even.
-/* STRATEGY:
+/*
 Definition:
 * a number is even if it is one more than an odd number
 * a number is odd if it is one more than an even number
 * 0 is even
 * NEGATIVE numbers can be odd/even; it is symmetrical to positive #s
+STRATEGY:
+If number is negative, turn it positive
 1) Base case #1: 0 is Even
 2) Base case #2: 1 is Odd
-3) Return recursively absolute value of number - 2
+3) Return recursively number - 2
 3B)(why 2? even & oddness varies every OTHER number)
  */
 let isEven = function(n)
 {
-  if (n === 0) return true;
+  if (n < 0) n = -n;
+  else if (n === 0) return true;
   else if (n === 1) return false;
-  return isEven(Math.abs(n) - 2);
+  return isEven(n - 2);
 };
 
 // 5. Sum all integers below a given integer.
@@ -95,18 +99,19 @@ let sumBelow = function(n)
 // range(2,9); // [3,4,5,6,7,8]
 /* STRATEGY:
 1) x will be the moving target that's changing, y is fixed 'destination'
-2) same solution in cases of both negative and positive x
+2) same pattern in cases of both negative and positive x
 3) so the 2 different case is when x is greater than or less than y
 3B) range(7, 2) vs range(2, 7)
 4) Case 1: x < y (e.g: range(2, 7))
 4B) base case: x is one LESS than y, or x = y, return []
 4C) else, COUNT UP to y
-* recursively return range of x + 1, concat to array literal with beginning val x + 1
+* recursively return range of x + 1,
+* concat to array literal with beginning val x + 1
 5) Case 2: x > y (e.g range(7, 2))
 5B) base case: x is one MORE than y, or x = y, return []
 5C) else, COUNT DOWN to y
-* return recursively range of x - 1, concat to array literal w/ beginning val of x - 1
-
+* return recursively range of x - 1,
+* concat to array literal w/ beginning val of x - 1
 */
 let range = function(x, y)
 {
@@ -126,84 +131,299 @@ let range = function(x, y)
 // 8^2 = 8 x 8 = 64. Here, 8 is the base and 2 is the exponent.
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
-let exponent = function(base, exp) {
+/* STRATEGY:
+1) Base case: if exponent is 0, return 1
+2) if exponent is POSITIVE: count down exponent until it hits base case
+return base * recursively call exponent(base, exponent - 1)
+*** For optimization ***
+2C) EVEN: store return val of recursively calling exponent / 2
+& multiply return val by itself.
+3) if exponent is NEGATIVE: pass exponent in the form of
+num ^ -exp = 1 / num ^ exp
+3B) remember to put negative sign in front of exp to turn exponent back to positive!
+ */
+let exponent = function(base, exp)
+{
+  if (exp === 0) return 1;
+  if (exp < 0)
+  {
+    return 1 / exponent(base, -exp);
+  }
+  else if (isEven(exp)) //optimized for even exponents
+  {
+    result = exponent(base, exp / 2);
+    return result * result;
+    // Note the below works but result in more calls b/c does not store result in variable
+    // return exponent(base, exp / 2) * exponent(base, exp / 2);
+  } else if (!isEven(exp))
+  {
+    return base * exponent(base, exp - 1);
+  }
 };
 
-// 8. Determine if a number is a power of two.
-// powerOfTwo(1); // true
-// powerOfTwo(16); // true
-// powerOfTwo(10); // false
-let powerOfTwo = function(n) {
+/* 8. Determine if a number is a power of two.
+i.e: 2 ^ something = number
+powerOfTwo(1); // true
+powerOfTwo(16); // true
+powerOfTwo(10); // false
+
+STRATEGY:
+1) base case is when n is 1, return true,
+2) if n is 0 or negative return false
+3) recursively return the number divide by 2
+*/
+let powerOfTwo = function(n)
+{
+  if (n === 1) return true;
+  else if (n < 1) return false;
+  return powerOfTwo(n / 2);
 };
 
 // 9. Write a function that reverses a string.
-let reverse = function(string) {
+// "abc" --> "cba"
+/* STRATEGY:
+  1) base case: string has 1 charac, just return the entire string
+  2) else return the last charac + recursively call reverse on all but last
+ */
+let reverse = function(string)
+{
+  if (string.length === 1) return string;
+  return string.slice(-1) + reverse(string.slice(0, -1));
 };
 
-// 10. Write a function that determines if a string is a palindrome.
-let palindrome = function(string) {
+/* 10. Write a function that determines if a string is a palindrome.
+e.g:
+odd # of characs: 'kayak' --> true
+even # of characs: 'adda' --> true
+STRATEGY:
+1) base case: string is 1 charac left (odd) or 0 charac left (even), then return true
+2) else compare the first and last character, if that's equivalent
+2B) then recursively return all characters in between
+3) finally return false if first & charac are not equal
+*/
+let palindrome = function(string)
+{
+  if (string.length === 1 || string.length === 0) return true;
+  else if (string.slice(0, 1).toLowerCase() === string.slice(-1).toLowerCase())
+  {
+    return palindrome(string.slice(1, -1));
+  }
+  return false;
 };
 
-// 11. Write a function that returns the remainder of x divided by y without using the
-// modulo (%) operator.
-// modulo(5,2) // 1
-// modulo(17,5) // 2
-// modulo(22,6) // 4
-let modulo = function(x, y) {
+/* 11. Write a function that returns the remainder of x divided by y without using the
+modulo (%) operator.
+modulo(5,2) // 1
+modulo(-5,2) // -1
+modulo(17,5) // 2
+modulo(22,6) // 4
+STRATEGY:
+* keep subtracting y until it becomes less than x, then it'll hit the main base case
+* I.e: if the first number is smaller than the second, return that number
+1) Base cases:
+1A) y is 0, return NaN (e.g: 5 % 0 = NaN)
+1B) y is negative, turn y to positive (e.g: 4 % -5 = 4)
+1C) x is negative, invert x as well as the function (e.g: -4 % 5 = -4)
+1D) main case: x is smaller than y, return x (e.g: 4 % 5 = 4)
+2) Recursive case: return function of x subtract y, until it hits one of the base cases
+*/
+let modulo = function(x, y)
+{
+  if (y === 0) return NaN;
+  if (y < 0) y = -y;
+  if (x < 0) return -modulo(-x, y);
+  if (x < y) return x;
+  return modulo(x - y, y);
 };
 
-// 12. Write a function that multiplies two numbers without using the * operator or
-// Math methods.
-let multiply = function(x, y) {
+/* 12. Write a function that multiplies two numbers without using the * operator or
+Math methods. e.g: multiply(5, 6), multiply(5, -6)
+STRATEGY:
+* Similar to factorial and range problems
+1) Base cases:
+1B) y or x is 0, return 0 (anything multiply by 0 is 0)
+1C) when y is 1, return x (anything multiply by 1 is itself)
+2) If y is POSITIVE, COUNT DOWN y until it hits base case
+2B) recursively add x to the recursive calls of y - 1
+3) If y is NEGATIVE, COUNT UP y until it hits base case
+3B) recursively add NEGATIVE x to recursive calls of y + 1
+3C) Why? if x is positive & y is negative, will turn x negative & get a negative answer
+And if x is negative & y is negative, will turn x positive & get a positive answer
+*/
+let multiply = function(x, y)
+{
+  if (y === 0 || x === 0) return 0;
+  if (y === 1) return x;
+  if (y > 0)
+  {
+    return x + multiply(x, y - 1);
+  } else if (y < 0)
+  {
+    return -x + multiply(x, y + 1);
+  }
 };
 
-// 13. Write a function that divides two numbers without using the / operator or
-// Math methods to arrive at an approximate quotient (ignore decimal endings).
-let divide = function(x, y) {
+/* 13. Write a function that divides two numbers without using the / operator or
+Math methods to arrive at an approximate quotient (ignore decimal endings).
+E.g: divide(6, 2) or divide(-6, 2) or divide(-6, -2)
+NOTE: This is INTEGER DIVISION
+STRATEGY:
+1) Base cases:
+1B) if the divisor (y) is 0, return NaN  (e.g: 5/0)
+1C) if the dividend (x) is 0, return 0 (e.g: 0/5)
+1D) if the dividend is less than divisor (e.g: 1/5 ) or less than negative divisor (e.g: 1/-5 = -1/5 ), return 0
+1E) if divisor - dividend is 0 then return 1 (e.g: 5/5)
+2) else return 1 + recursive return of divisor - dividend
+E.g:
+6/2 --> 1 + ((6-2), 2) --> 1 + ((4-2),2) --> hits base case -->
+return 1 + the other 2 ones earlier = 3
+NOTE: test cases do not account for evenly divided answers for negatives
+(-6 / 2) since that is much more difficult
+*/
+let divide = function(x, y)
+{
+  if (y === 0) return NaN;
+  if (x - y === 0) return 1;
+  if (x === 0 || x < -y || x < y) return 0;
+  if (x > 0)
+  {
+    return 1 + divide(x - y, y);
+  } else
+  {
+    return -1 + divide(x + y, y);
+  }
 };
 
-// 14. Find the greatest common divisor (gcd) of two positive numbers. The GCD of two
-// integers is the greatest integer that divides both x and y with no remainder.
-// gcd(4,36); // 4
-// http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
-// https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
-let gcd = function(x, y) {
+/* 14. Find the greatest common divisor (gcd) of two positive numbers. The GCD of two
+integers is the greatest integer that divides both x and y with no remainder.
+gcd(4,36); // 4
+
+* NOTE: the test cases here returns null for negative numbers
+* Use Euclidean Algorithm: https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
+
+STRATEGY:
+1) Base cases: if either x or y is 0, return the other number
+1B) return null if x or y is negative
+(only b/c those are test cases; IRL, GCD for negative numbers is always positive)
+2) Get the remainder of x / y
+2B) y is now x, & remainder is now y. Recursively call function on y and remainder
+*/
+let gcd = function(x, y)
+{
+  if (x === 0) return y;
+  if (y === 0) return x;
+  if (x < 0 || y < 0) return null;
+  let remainder = x % y;
+  return gcd(y, remainder);
 };
 
-// 15. Write a function that compares each character of two strings and returns true if
-// both are identical.
-// compareStr('house', 'houses') // false
-// compareStr('tomato', 'tomato') // true
-let compareStr = function(str1, str2) {
+/* 15. Write a function that compares each character of two strings and returns true if
+both are identical.
+compareStr('house', 'houses') // false
+compareStr('tomato', 'tomato') // true
+STRATEGY: similar to palindrome problem
+1) Base case: both strings are empty, then return true
+2) if first charac of each is equal, then recursively compare the rest
+3) otherwise return false
+*/
+let compareStr = function(str1, str2)
+{
+  if (str1 === "" && str2 === "") return true;
+  if (str1.slice(0, 1) === str2.slice(0, 1))
+  {
+    return compareStr(str1.slice(1), str2.slice(1));
+  }
+  return false;
 };
 
-// 16. Write a function that accepts a string and creates an array where each letter
-// occupies an index of the array.
-let createArray = function(str) {
+/* 16. Write a function that accepts a string and creates an array where each letter
+occupies an index of the array.
+* Works similar to split on empty string ""
+* createArray('hologram')).to.eql(['h','o','l','o','g','r','a','m'])
+STRATEGY:
+1) base case: if string is empty return empty array
+2) return the first charac of string in array literal, concat to recursive calls
+to all but first charac of string
+*/
+let createArray = function(str)
+{
+  if (str === "") return [];
+  return [str.slice(0, 1)].concat(createArray(str.slice(1)));
 };
 
-// 17. Reverse the order of an array
-let reverseArr = function(array) {
+/* 17. Reverse the order of an array
+STRATEGY:
+1) base case: if array is empty, then return []
+2) else make copy of array, pop off the last elem in copy,
+concat it to the recursive call of the function on all but last elements in the arr
+*/
+let reverseArr = function(array)
+{
+  if (array.length === 0) return [];
+  let copyArr = array.slice(0);
+  return [copyArr.pop()].concat(reverseArr(copyArr));
 };
 
-// 18. Create a new array with a given value and length.
-// buildList(0,5) // [0,0,0,0,0]
-// buildList(7,3) // [7,7,7]
-let buildList = function(value, length) {
+/* 18. Create a new array with a given value and length.
+buildList(0,5) // [0,0,0,0,0]
+buildList(7,3) // [7,7,7]
+
+STRATEGY:
+* COUNT DOWN length for each recursive call
+1) Base case: if length is 0, return empty array []
+2) recursively return the value in array literal, concat to
+recursive calls of function, decreasing length by 1 each time
+*/
+let buildList = function(value, length)
+{
+  if (length === 0) return [];
+  return [value].concat(buildList(value, length - 1));
 };
 
-// 19. Implement FizzBuzz. Given integer n, return an array of the string representations of 1 to n.
-// For multiples of three, output 'Fizz' instead of the number.
-// For multiples of five, output 'Buzz' instead of the number.
-// For numbers which are multiples of both three and five, output “FizzBuzz” instead of the number.
-// fizzBuzz(5) // ['1','2','Fizz','4','Buzz']
-let fizzBuzz = function(n) {
+/* 19. Implement FizzBuzz. Given integer n, return an array of the string representations of 1 to n.
+For multiples of three, output 'Fizz' instead of the number.
+For multiples of five, output 'Buzz' instead of the number.
+For numbers which are multiples of both three and five, output “FizzBuzz” instead of the number.
+fizzBuzz(5) // ['1','2','Fizz','4','Buzz']
+
+STRATEGY: COUNT DOWN to base case of n = 0
+1) Base case: when n is 0, return empty array
+2) Have a variable to hold either n, or one of the fizzbuzz variations
+2B) turn that elem to string, add it to array literal, and concat to recursive calls
+of fizzBuzz, decreasing n by 1 each time.
+* NOTE: the order of concat is important; it's different from prev examples!
+* Why? To prevent array from printing out in reverse!
+*/
+let fizzBuzz = function(n)
+{
+  let elem = n;
+  if (n === 0) return [];
+  else if (n % 3 === 0 && n % 5 === 0) elem = "FizzBuzz";
+  else if (n % 3 === 0) elem = "Fizz";
+  else if (n % 5 === 0) elem = "Buzz";
+  return fizzBuzz(n - 1).concat([elem.toString()]);
 };
 
-// 20. Count the occurence of a value in a list.
-// countOccurrence([2,7,4,4,1,4], 4) // 3
-// countOccurrence([2,'banana',4,4,1,'banana'], 'banana') // 2
-let countOccurrence = function(array, value) {
+/*
+20. Count the occurence of a value in a list.
+countOccurrence([2,7,4,4,1,4], 4) // 3
+countOccurrence([2,'banana',4,4,1,'banana'], 'banana') // 2
+STRATEGY:
+1) Base case: if the array is empty then return 0
+2) if the first value of array is equal to target, return
+ 1 plus recursively result of calling the function on all but first element
+2B) else return recursive result of calling the function on all but first element
+*/
+let countOccurrence = function(array, value)
+{
+  if (array.length === 0) return 0;
+  if (array[0] === value)
+  {
+    return 1 + countOccurrence(array.slice(1), value);
+  } else
+  {
+    return countOccurrence(array.slice(1), value);
+  }
 };
 
 // 21. Write a recursive version of map.
@@ -235,7 +455,9 @@ let replaceKeysInObj = function(obj, oldKey, newKey) {
 // Example: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34.....
 // fibonacci(5); // [0,1,1,2,3,5]
 // Note: The 0 is not counted.
-let fibonacci = function(n) {
+let fibonacci = function(n)
+{
+
 };
 
 // 26. Return the Fibonacci number located at index n of the Fibonacci sequence.
@@ -243,7 +465,11 @@ let fibonacci = function(n) {
 // nthFibo(5); // 5
 // nthFibo(7); // 13
 // nthFibo(3); // 2
-let nthFibo = function(n) {
+let nthFibo = function(n)
+{
+  if (n < 0) return null;
+  if (n <= 1) return n;
+  return nthFibo(n - 1) + nthFibo(n - 2);
 };
 
 // 27. Given an array of words, return a new array containing each word capitalized.
