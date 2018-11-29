@@ -495,8 +495,17 @@ let capitalizeFirst = function(array) {
 let nestedEvenSum = function(obj) {
 };
 
-// 30. Flatten an array containing nested arrays.
-// flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
+/* 30. Flatten an array containing nested arrays.
+flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
+
+STRATEGY:
+1) Base case: regular element (non-array)
+2) Through a loop, check each element, if it is an array,
+recursively call the function on it again.
+Add it to the variable elem,
+2B) use concat to merge that call and save it to result variable at the end
+of each loop iteration
+*/
 let flatten = function(array)
 {
   let result = [];
@@ -560,12 +569,47 @@ let numToText = function(str) {
 let tagCount = function(tag, node) {
 };
 
-// 38. Write a function for binary search.
-// let array = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
-// binarySearch(array, 5) // 5
-// https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/binary-search
-let binarySearch = function(array, target, min, max) {
+/* 38. Write a function for binary search.
+let array = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+binarySearch(array, 5) // 5
+https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/binary-search
+STRATEGY:
+1) Base cases:
+1A) if target is equal to element at midpoint, return midpoint
+1B) if min is greater than max return null
+2) Else, similar to iterative version:
+* if target is less than elem at midpoint: look to the LEFT
+recursively return function, passing in a new max as the midpoint - 1
+* if target is more than elem at midpoint: look to the RIGHT
+recursively return function, passing in a new min as the midpoint + 1
+
+IMPORTANT CONCEPT: how to find the midpoint correctly? 2 ways
+1) (max - min)/2 + min
+* WHY the extra + min? to offset when you're looking on the RIGHT
+* E.g: from the left everything is OK with the formula (max - min) / 2
+* From 0 to 5, midpoint is 2
+* But from the RIGHT: 0 to 5, what is midpoint now? Still 2? No!
+* Need to add the min (5) to 2, to get the correct midpoint! This is 7!!!
+2) (max + min) / 2
+* Same as above but is simpler
+*/
+let binarySearch = function(array, target, min, max)
+{
+  let copy = array.slice();
+  if (min === undefined) min = 0;
+  if (max === undefined) max = copy.length - 1;
+  if (min > max) return null;
+  let midIndex = Math.floor(((max + min) / 2) );
+  if (target === copy[midIndex]) return midIndex;
+  else if (target < copy[midIndex])
+  {
+    return binarySearch(copy, target, min, midIndex - 1);
+  } else
+  {
+  return binarySearch(copy, target, midIndex + 1, max);
+  }
 };
+
 
 // 39. Write a merge sort function.
 // mergeSort([34,7,23,32,5,62]) // [5,7,23,32,34,62]
