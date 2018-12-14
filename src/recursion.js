@@ -450,14 +450,30 @@ let countValuesInObj = function(obj, value) {
 let replaceKeysInObj = function(obj, oldKey, newKey) {
 };
 
-// 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
-// number is the sum of the previous two.
-// Example: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34.....
-// fibonacci(5); // [0,1,1,2,3,5]
-// Note: The 0 is not counted.
+/* 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
+number is the sum of the previous two.
+Example: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34.....
+fibonacci(5); // [0,1,1,2,3,5]
+
+STRATEGY:
+1) Base case: if number is 1 or 2 return its corresponding array from [0] to [0, 1, 1]
+* Use slice, & make ending number + 1 to account for zero indexing
+2) Recursively return the function on n - 1. 
+When it hits base case, it will percolate up the stack 
+Get the sum of the last & second to last numbers in the array
+Push them into the array
+Return the array
+*/
 let fibonacci = function(n)
 {
-
+  if (n <= 0) return null;
+  if (n < 3)
+  {
+    return [0, 1, 1].slice(0, n + 1);
+  }
+  let arr = fibonacci(n - 1);
+  arr.push(arr[arr.length - 1] + arr[arr.length - 2]);
+  return arr;
 };
 
 // 26. Return the Fibonacci number located at index n of the Fibonacci sequence.
@@ -583,7 +599,8 @@ recursively return function, passing in a new max as the midpoint - 1
 * if target is more than elem at midpoint: look to the RIGHT
 recursively return function, passing in a new min as the midpoint + 1
 
-IMPORTANT CONCEPT: how to find the midpoint correctly? 2 ways
+IMPORTANT CONCEPTS:
+Note 1: how to find the midpoint correctly? 2 ways
 1) (max - min)/2 + min
 * WHY the extra + min? to offset when you're looking on the RIGHT
 * E.g: from the left everything is OK with the formula (max - min) / 2
@@ -592,13 +609,21 @@ IMPORTANT CONCEPT: how to find the midpoint correctly? 2 ways
 * Need to add the min (5) to 2, to get the correct midpoint! This is 7!!!
 2) (max + min) / 2
 * Same as above but is simpler
+
+Note 2:
+another way is to put the calls into the if condition. But MUST use <= or >=
+if (min >= max)
+{
+  //recursive calls
+}
+return null
 */
 let binarySearch = function(array, target, min, max)
 {
   let copy = array.slice();
   if (min === undefined) min = 0;
   if (max === undefined) max = copy.length - 1;
-  if (min > max) return null;
+  if (min > max) return null; //see note 2
   let midIndex = Math.floor(((max + min) / 2) );
   if (target === copy[midIndex]) return midIndex;
   else if (target < copy[midIndex])
